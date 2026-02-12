@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  gpets:
+    build: ./gpets-api
+    container_name: gpets-app
+    ports:
+      - "8080:8080"
+    environment:
+      - FIREBASE_DATABASE_URL=https://fir-auth-gpets-default-rtdb.firebaseio.com
+    volumes:
+      - ./gpets-api/src/main/resources/firebase-service-account.json:/app/firebase-service-account.json:ro
