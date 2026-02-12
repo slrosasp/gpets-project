@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">    
+  <title>Gpets - Mis Mascotas</title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script src="https://kit.fontawesome.com/0faddc1af8.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.1);
+    }
+    .hover-scale {
+      transition: transform 0.3s ease;
+    }
+    .hover-scale:hover {
+      transform: scale(1.02);
+    }
+    .input-focus-effect {
+      transition: all 0.3s ease;
+    }
+    .input-focus-effect:focus {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .tabla-mascotas {
+      border-collapse: separate;
+      border-spacing: 0 8px;
+    }
+    .tabla-mascotas tr {
+      transition: all 0.3s ease;
+    }
+    .tabla-mascotas tr:hover {
+      transform: scale(1.01);
+    }
+
+    /* Modal styles - AGREGAR ESTO AL FINAL DE TU <style> */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
+    }
+  </style>
+</head>
+
+<body class="antialiased min-h-screen">
+  <nav class="glass-effect fixed top-0 left-0 right-0 z-50 px-6 py-3">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+
+      <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='/assets/html/dashboard.html'">
+        <div class="w-10 h-10 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center">
+          <i class="fas fa-paw text-white text-xl"></i>
+        </div>
+        <span class="text-2xl font-bold text-gray-900">Gpets</span>
+      </div>
+
+      <div class="relative" id="userMenuContainer">
+
+        <button id="userMenuButton" class="flex items-center gap-3 bg-white/80 hover:bg-white rounded-xl px-4 py-2 transition-all transform hover:scale-[1.02] shadow-md border border-gray-100">
+          <!-- Avatar -->
+          <div class="w-10 h-10 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center overflow-hidden">
+            <i class="fas fa-user text-white text-lg" id="userAvatarIcon"></i>
+            <img id="userAvatarImage" class="w-full h-full object-cover hidden" src="" alt="Avatar">
+          </div>
+
+          <div class="text-left hidden md:block">
+            <p class="text-sm font-semibold text-gray-900" id="navUserName">Cargando...</p>
+            <p class="text-xs text-gray-500" id="navUserEmail">cargando@email.com</p>
+          </div>
+
+          <i class="fas fa-chevron-down text-gray-500 text-xs ml-1"></i>
+        </button>
+
+        <div id="userDropdown" class="absolute right-0 mt-2 w-64 glass-effect rounded-xl shadow-xl py-2 hidden z-50 border border-gray-100">
+          <div class="px-4 py-3 border-b border-gray-100">
+            <p class="text-sm font-semibold text-gray-900" id="dropdownUserName">Cargando...</p>
+            <p class="text-xs text-gray-500 truncate" id="dropdownUserEmail">cargando@email.com</p>
+          </div>
+
+          <div class="py-1">
+            <a href="/assets/html/update-profile.html" class="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-all">
+              <i class="fas fa-user-edit w-5 text-teal-600"></i>
+              <span class="text-sm font-medium">Editar Perfil</span>
+            </a>
+            
+            <a href="/assets/html/mis-mascotas.html" class="flex items-center gap-3 px-4 py-2.5 text-teal-700 bg-teal-50 transition-all">
+              <i class="fas fa-paw w-5 text-teal-600"></i>
+              <span class="text-sm font-medium">Mis Mascotas</span>
+            </a>
+            
+            <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-all">
+              <i class="fas fa-cog w-5 text-teal-600"></i>
+              <span class="text-sm font-medium">Configuración</span>
+            </a>
+          </div>
+          
+          <hr class="my-1 border-gray-200">
+
+          <div class="py-1">
+            <button id="logoutDropdownBtn" class="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 transition-all">
+              <i class="fas fa-sign-out-alt w-5"></i>
+              <span class="text-sm font-medium">Cerrar Sesión</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="pt-24 pb-12 px-4">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Header de la página -->
+      <div class="glass-effect rounded-2xl p-8 mb-8">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-6">
+            <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
+              <i class="fas fa-paw text-white text-3xl"></i>
+            </div>
+            <div>
+              <h1 class="text-3xl font-bold text-gray-900">Mis Mascotas</h1>
+              <p class="text-gray-600 mt-1">Gestiona y registra a tus compañeros peludos</p>
+            </div>
+          </div>
+          
+          <!-- Botón para mostrar/ocultar formulario -->
+          <button id="toggleFormBtn" class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-teal-600 hover:to-teal-700 transition-all transform hover:scale-[1.02] shadow-lg flex items-center gap-2">
+            <i class="fas fa-plus-circle"></i>
+            <span>Registrar Mascota</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Formulario de registro de mascota (oculto por defecto) -->
+      <div id="petFormContainer" class="glass-effect rounded-2xl p-8 mb-8 hidden">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-12 h-12 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center">
+            <i class="fas fa-dog text-white text-xl"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900">Registrar Nueva Mascota</h2>
+        </div>
+        
+        <form id="registerPetForm" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Nombre -->
+            <div class="space-y-2">
+              <label for="petNombre" class="text-sm font-semibold text-gray-700 block">Nombre *</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-tag text-gray-400"></i>
+                </div>
+                <input type="text" id="petNombre" required
+                       class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                       placeholder="Ej: Max">
+              </div>
+            </div>
+            
+            <!-- Especie -->
+            <div class="space-y-2">
+              <label for="petEspecie" class="text-sm font-semibold text-gray-700 block">Especie *</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-paw text-gray-400"></i>
+                </div>
+                <select id="petEspecie" required
+                        class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 text-gray-700 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all">
+                  <option value="">Selecciona</option>
+                  <option value="perro">Perro</option>
+                  <option value="gato">Gato</option>
+                  <option value="ave">Ave</option>
+                  <option value="conejo">Conejo</option>
+                  <option value="hamster">Hámster</option>
+                  <option value="pez">Pez</option>
+                  <option value="reptil">Reptil</option>
+                  <option value="otro">Otro</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Raza -->
+            <div class="space-y-2">
+              <label for="petRaza" class="text-sm font-semibold text-gray-700 block">Raza</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-dog text-gray-400"></i>
+                </div>
+                <input type="text" id="petRaza"
+                       class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                       placeholder="Ej: Labrador">
+              </div>
+            </div>
+            
+            <!-- Edad -->
+            <div class="space-y-2">
+              <label for="petEdad" class="text-sm font-semibold text-gray-700 block">Edad (años)</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-calendar-alt text-gray-400"></i>
+                </div>
+                <input type="number" id="petEdad" min="0" max="30"
+                       class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                       placeholder="Ej: 3">
+              </div>
+            </div>
+            
+            <!-- Color -->
+            <div class="space-y-2">
+              <label for="petColor" class="text-sm font-semibold text-gray-700 block">Color</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-palette text-gray-400"></i>
+                </div>
+                <input type="text" id="petColor"
+                       class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                       placeholder="Ej: Dorado">
+              </div>
+            </div>
+            
+            <!-- Peso -->
+            <div class="space-y-2">
+              <label for="petPeso" class="text-sm font-semibold text-gray-700 block">Peso (kg)</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-weight text-gray-400"></i>
+                </div>
+                <input type="number" id="petPeso" step="0.1" min="0"
+                       class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                       placeholder="Ej: 25.5">
+              </div>
+            </div>
+            
+            <!-- Foto URL -->
+            <div class="space-y-2">
+              <label for="petFotoUrl" class="text-sm font-semibold text-gray-700 block">URL de Foto</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-camera text-gray-400"></i>
+                </div>
+                <input type="url" id="petFotoUrl"
+                       class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                       placeholder="https://ejemplo.com/foto.jpg">
+              </div>
+            </div>
+            
+            <!-- Latitud (opcional) -->
+            <div class="space-y-2">
+              <label for="petLatitud" class="text-sm font-semibold text-gray-700 block">Latitud</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-map-marker-alt text-gray-400"></i>
+                </div>
+                <input type="number" id="petLatitud" step="any"
+                       class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                       placeholder="-12.046374">
+              </div>
+            </div>
+            
+            <!-- Longitud (opcional) -->
+            <div class="space-y-2">
+              <label for="petLongitud" class="text-sm font-semibold text-gray-700 block">Longitud</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-map-marker-alt text-gray-400"></i>
+                </div>
+                <input type="number" id="petLongitud" step="any"
+                       class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                       placeholder="-77.042793">
+              </div>
+            </div>
+          </div>
+          
+          <!-- Botones del formulario -->
+          <div class="flex gap-4 pt-4 border-t border-gray-200">
+            <button type="submit" id="savePetBtn" class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-teal-600 hover:to-teal-700 transition-all transform hover:scale-[1.02] shadow-lg flex items-center gap-2">
+              <i class="fas fa-save"></i>
+              Guardar Mascota
+            </button>
+            <button type="button" id="cancelFormBtn" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-gray-600 hover:to-gray-700 transition-all transform hover:scale-[1.02] shadow-lg flex items-center gap-2">
+              <i class="fas fa-times"></i>
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Tabla de mascotas -->
+      <div class="glass-effect rounded-2xl p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <i class="fas fa-list text-teal-600 text-xl"></i>
+            <h2 class="text-xl font-bold text-gray-900">Listado de Mascotas</h2>
+          </div>
+          <span id="petsCount" class="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm font-semibold">0 mascotas</span>
+        </div>
+        
+        <!-- Contenedor de tabla (responsive) -->
+        <div class="overflow-x-auto">
+          <table class="tabla-mascotas w-full">
+            <thead>
+              <tr class="bg-gray-50">
+                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 rounded-l-xl">Foto</th>
+                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Nombre</th>
+                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Especie</th>
+                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Raza</th>
+                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Edad</th>
+                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Color</th>
+                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Peso</th>
+                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700 rounded-r-xl">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="petsTableBody">
+              <!-- Las mascotas se cargarán dinámicamente aquí -->
+              <tr id="emptyPetsRow">
+                <td colspan="8" class="px-6 py-12 text-center">
+                  <div class="flex flex-col items-center justify-center">
+                    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                      <i class="fas fa-dog text-gray-400 text-4xl"></i>
+                    </div>
+                    <p class="text-gray-500 text-lg font-medium">No tienes mascotas registradas</p>
+                    <p class="text-gray-400 text-sm mt-1">Haz clic en "Registrar Mascota" para agregar a tu compañero</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  
+
+
+    <!-- ========== MODAL DE EDICIÓN DE MASCOTA ========== -->
+    <div id="editPetModal" class="modal-overlay">
+      <div class="modal-content glass-effect rounded-2xl p-8 max-w-2xl w-full mx-4">
+  
+      <!-- FOTO DE LA MASCOTA (TAMAÑO MEDIANO) -->
+      <div class="flex flex-col items-center mb-6">
+        <div id="editAvatarContainer" class="w-48 h-48 bg-gradient-to-br from-teal-400 to-teal-600 rounded-2xl flex items-center justify-center overflow-hidden shadow-xl border-4 border-white">
+          <i id="editAvatarIcon" class="fas fa-paw text-white text-6xl"></i>
+          <img id="editAvatarImage" class="w-full h-full object-cover hidden" src="" alt="Avatar">
+        </div>
+        <h2 id="editPetName" class="text-2xl font-bold text-gray-900 mt-4">Editar Mascota</h2>
+      </div>
+  
+    <!-- FORMULARIO DE EDICIÓN -->
+    <form id="editPetForm" class="space-y-6">
+      <input type="hidden" id="editPetId">
+    
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Nombre -->
+        <div class="space-y-2">
+          <label for="editNombre" class="text-sm font-semibold text-gray-700 block">Nombre *</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-tag text-gray-400"></i>
+            </div>
+            <input type="text" id="editNombre" required
+                 class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                 placeholder="Nombre de la mascota">
+          </div>
+        </div>
+      
+        <!-- Especie -->
+        <div class="space-y-2">
+          <label for="editEspecie" class="text-sm font-semibold text-gray-700 block">Especie *</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-paw text-gray-400"></i>
+            </div>
+            <select id="editEspecie" required
+                    class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 text-gray-700 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all">
+              <option value="">Selecciona</option>
+              <option value="perro">Perro</option>
+              <option value="gato">Gato</option>
+              <option value="ave">Ave</option>
+              <option value="conejo">Conejo</option>
+              <option value="hamster">Hámster</option>
+              <option value="pez">Pez</option>
+              <option value="reptil">Reptil</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Raza -->
+        <div class="space-y-2">
+          <label for="editRaza" class="text-sm font-semibold text-gray-700 block">Raza</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-dog text-gray-400"></i>
+            </div>
+            <input type="text" id="editRaza"
+                   class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                   placeholder="Raza">
+          </div>
+        </div>
+        
+        <!-- Edad -->
+        <div class="space-y-2">
+          <label for="editEdad" class="text-sm font-semibold text-gray-700 block">Edad (años)</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-calendar-alt text-gray-400"></i>
+            </div>
+            <input type="number" id="editEdad" min="0" max="30"
+                   class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                   placeholder="Edad">
+          </div>
+        </div>
+        
+        <!-- Color -->
+        <div class="space-y-2">
+          <label for="editColor" class="text-sm font-semibold text-gray-700 block">Color</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-palette text-gray-400"></i>
+            </div>
+            <input type="text" id="editColor"
+                   class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                   placeholder="Color">
+          </div>
+        </div>
+        
+        <!-- Peso -->
+        <div class="space-y-2">
+          <label for="editPeso" class="text-sm font-semibold text-gray-700 block">Peso (kg)</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-weight text-gray-400"></i>
+            </div>
+            <input type="number" id="editPeso" step="0.1" min="0"
+                   class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                   placeholder="Peso">
+          </div>
+        </div>
+        
+        <!-- 🔵 LATITUD - NUEVO CAMPO -->
+        <div class="space-y-2">
+          <label for="editLatitud" class="text-sm font-semibold text-gray-700 block">Latitud</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-map-marker-alt text-gray-400"></i>
+            </div>
+            <input type="number" id="editLatitud" step="any"
+                   class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                   placeholder="-12.046374">
+          </div>
+        </div>
+        
+        <!-- 🟢 LONGITUD - NUEVO CAMPO -->
+        <div class="space-y-2">
+          <label for="editLongitud" class="text-sm font-semibold text-gray-700 block">Longitud</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-map-marker-alt text-gray-400"></i>
+            </div>
+            <input type="number" id="editLongitud" step="any"
+                   class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                   placeholder="-77.042793">
+          </div>
+        </div>
+        
+        <!-- Foto URL (OCUPA FILA COMPLETA) -->
+        <div class="space-y-2 md:col-span-2">
+          <label for="editFotoUrl" class="text-sm font-semibold text-gray-700 block">URL de Foto</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-camera text-gray-400"></i>
+            </div>
+            <input type="url" id="editFotoUrl"
+                   class="input-focus-effect pl-10 p-3 appearance-none block w-full bg-gray-50 placeholder-gray-400 rounded-xl border border-gray-200 focus:border-teal-500 focus:bg-white focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                   placeholder="https://ejemplo.com/foto.jpg">
+          </div>
+        </div>
+      </div>
+      
+      <!-- BOTONES DE ACCIÓN -->
+      <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+        <button type="submit" id="updatePetBtn" class="px-6 py-3 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-xl font-medium hover:from-teal-600 hover:to-teal-700 transition-all transform hover:scale-[1.02] shadow-md flex items-center gap-2">
+          <i class="fas fa-save"></i>
+          Actualizar Mascota
+        </button>
+        <button type="button" id="deleteFromEditBtn" class="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-medium hover:from-red-600 hover:to-red-700 transition-all transform hover:scale-[1.02] shadow-md flex items-center gap-2">
+          <i class="fas fa-trash"></i>
+          Eliminar
+        </button>
+        <button type="button" onclick="cerrarEditModal()" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all transform hover:scale-[1.02] shadow-md">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script src="/assets/js/mis-mascotas.js" type="module"></script>
+  
+</body>
+</html>

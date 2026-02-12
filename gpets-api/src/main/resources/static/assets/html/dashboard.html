@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">    
+  <title>Gpets - Dashboard</title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script src="https://kit.fontawesome.com/0faddc1af8.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.1);
+    }
+    .hover-scale {
+      transition: transform 0.3s ease;
+    }
+    .hover-scale:hover {
+      transform: scale(1.02);
+    }
+  </style>
+</head>
+
+<body class="antialiased min-h-screen">
+  <nav class="glass-effect fixed top-0 left-0 right-0 z-50 px-6 py-3">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+
+      <!-- Logo y nombre de la app (izquierda) -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='/assets/html/dashboard.html'">
+        <div class="w-10 h-10 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center">
+          <i class="fas fa-paw text-white text-xl"></i>
+        </div>
+        <span class="text-2xl font-bold text-gray-900">Gpets</span>
+      </div>
+      
+      <!-- Perfil de usuario con menú desplegable (derecha) -->
+      <div class="relative" id="userMenuContainer">
+        
+        <!-- Botón del perfil -->
+        <button id="userMenuButton" class="flex items-center gap-3 bg-white/80 hover:bg-white rounded-xl px-4 py-2 transition-all transform hover:scale-[1.02] shadow-md border border-gray-100">
+          <!-- Avatar -->
+          <div class="w-10 h-10 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center overflow-hidden">
+            <i class="fas fa-user text-white text-lg" id="userAvatarIcon"></i>
+            <img id="userAvatarImage" class="w-full h-full object-cover hidden" src="" alt="Avatar">
+          </div>
+          
+          <!-- Información del usuario -->
+          <div class="text-left hidden md:block">
+            <p class="text-sm font-semibold text-gray-900" id="navUserName">Cargando...</p>
+            <p class="text-xs text-gray-500" id="navUserEmail">cargando@email.com</p>
+          </div>
+          
+          <!-- Icono flecha -->
+          <i class="fas fa-chevron-down text-gray-500 text-xs ml-1"></i>
+        </button>
+        
+        <!-- Menú desplegable (dropdown) -->
+        <div id="userDropdown" class="absolute right-0 mt-2 w-64 glass-effect rounded-xl shadow-xl py-2 hidden z-50 border border-gray-100">
+          <!-- Header del dropdown -->
+          <div class="px-4 py-3 border-b border-gray-100">
+            <p class="text-sm font-semibold text-gray-900" id="dropdownUserName">Cargando...</p>
+            <p class="text-xs text-gray-500 truncate" id="dropdownUserEmail">cargando@email.com</p>
+          </div>
+          
+          <!-- Opciones del menú -->
+          <div class="py-1">
+            <a href="/assets/html/update-profile.html" class="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-all">
+              <i class="fas fa-user-edit w-5 text-teal-600"></i>
+              <span class="text-sm font-medium">Editar Perfil</span>
+            </a>
+            
+            <a href="/assets/html/mis-mascotas.html" class="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-all">
+              <i class="fas fa-paw w-5 text-teal-600"></i>
+              <span class="text-sm font-medium">Mis Mascotas</span>
+            </a>
+            
+            <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-all">
+              <i class="fas fa-cog w-5 text-teal-600"></i>
+              <span class="text-sm font-medium">Configuración</span>
+            </a>
+          </div>
+          
+          <hr class="my-1 border-gray-200">
+          
+          <!-- Cerrar sesión -->
+          <div class="py-1">
+            <button id="logoutDropdownBtn" class="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 transition-all">
+              <i class="fas fa-sign-out-alt w-5"></i>
+              <span class="text-sm font-medium">Cerrar Sesión</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- Contenido principal -->
+  <main class="pt-24 pb-12 px-4">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Header de bienvenida -->
+      <div class="glass-effect rounded-2xl p-8 mb-8">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">¡Bienvenido de nuevo!</h1>
+            <p class="text-gray-600 mt-1">Gestiona tus mascotas y servicios desde aquí</p>
+          </div>
+          <div class="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center">
+            <i class="fas fa-paw text-white text-2xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid de tarjetas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Tarjeta 1: Mis Mascotas -->
+        <div onclick="window.location.href='/assets/html/mis-mascotas.html'" class="glass-effect rounded-2xl p-6 hover:scale-[1.02] transition-all cursor-pointer">
+          <div class="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-paw text-white text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Mis Mascotas</h3>
+          <p class="text-gray-600">Gestiona el perfil de tus mascotas</p>
+        </div>
+        
+        <!-- Tarjeta 2: Citas -->
+        <div class="glass-effect rounded-2xl p-6 hover:scale-[1.02] transition-all cursor-pointer">
+          <div class="w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-calendar text-white text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Mis Citas</h3>
+          <p class="text-gray-600">Revisa y programa citas veterinarias</p>
+        </div>
+        
+        <!-- Tarjeta 3: Historial -->
+        <div class="glass-effect rounded-2xl p-6 hover:scale-[1.02] transition-all cursor-pointer">
+          <div class="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-history text-white text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Historial Médico</h3>
+          <p class="text-gray-600">Consulta el historial de tus mascotas</p>
+        </div>
+        
+        <!-- Tarjeta 4: Vacunas -->
+        <div class="glass-effect rounded-2xl p-6 hover:scale-[1.02] transition-all cursor-pointer">
+          <div class="w-14 h-14 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-syringe text-white text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Vacunas</h3>
+          <p class="text-gray-600">Control de vacunación</p>
+        </div>
+        
+        <!-- Tarjeta 5: Tienda -->
+        <div class="glass-effect rounded-2xl p-6 hover:scale-[1.02] transition-all cursor-pointer">
+          <div class="w-14 h-14 bg-gradient-to-br from-pink-400 to-pink-600 rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-shopping-cart text-white text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Tienda</h3>
+          <p class="text-gray-600">Productos y accesorios para mascotas</p>
+        </div>
+        
+        <!-- Tarjeta 6: Soporte -->
+        <div class="glass-effect rounded-2xl p-6 hover:scale-[1.02] transition-all cursor-pointer">
+          <div class="w-14 h-14 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-xl flex items-center justify-center mb-4">
+            <i class="fas fa-headset text-white text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Soporte</h3>
+          <p class="text-gray-600">Ayuda y atención al cliente</p>
+        </div>
+        
+      </div>
+    </div>
+  </main>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script src="/assets/js/dashboard.js" type="module"></script>
+  
+</body>
+</html>
