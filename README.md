@@ -8,7 +8,7 @@
 
 ## 👨‍💻 Autor
 **Sergio Rosas**  
-Desarrollador Full Stack | Backend Java | Spring Boot | Angular | JavaScript  
+Desarrollador Full Stack | Java | Spring Boot | JavaScript | React | Angular | Azure | SQL 
 📍 [Lima, Perú]  
 🔗 [LinkedIn](https://www.linkedin.com/in/slrosasp/) | 🐙 [GitHub](https://github.com/slrosasp)   
 📧 slrosasp@gmail.com
@@ -49,26 +49,65 @@ Permite el registro de usuarios con Google, administración de perfiles y un CRU
 | 1 | Crear proyecto en [Firebase Console](https://console.firebase.google.com/) |
 | 2 | Habilitar **Authentication** → **Google Sign-In** |
 | 3 | Crear **Realtime Database** en modo prueba |
-| 4 | Generar clave privada: ⚙️ → Configuración → Cuentas de servicio → **Generar nueva clave privada** |
-| 5 | Guardar el archivo como: `gpets-api/src/main/resources/firebase-service-account.json` |
+| 4 | Generar clave privada para el **SDK de Firebase Admin**: Descripcion General⚙️ → Cuentas de servicio |
+| 5 | Te llevara a la pestaña Configuracion de Proyecto, selecciona Java → **Generar nueva clave privada** |
+| 6 | Se descargará un archivo .json con un nombre similar a: `proj-gptes-prueba-firebase-adminsdk-fbsvc-xxxxx.json`
+| 7 | Renombrar el archivo descargado con el nombre `firebase-service-account.json`
+| 8 | Mover el archivo a la ruta exacta: `gpets-api/src/main/resources/`
 
-### 3️⃣ Variables de Entorno
+### 3️⃣ Configuración de Fronted
+
+| Paso | Acción |
+|------|--------|
+| 1 | En Firebase Console, ve a Descripción general del proyecto |
+| 2 | Haz clic en Agregar app → Selecciona Web (</>) |
+| 3 | Registra la app con un nombre (ej: "gpets-frontend") |
+| 4 | Copia el objeto firebaseConfig que te muestra Firebase |
+| 5 | Abre el archivo: gpets-api/src/main/resources/static/js/firebase-config.js (o la ruta donde esté) |
+| 6 | Reemplaza TODO el objeto firebaseConfig con el que copiaste de tu proyecto |
+
+📌 Ejemplo de cómo debe quedar la const firebaseConfig en el archivo firebase-config.js :
+
+```javascript
+const firebaseConfig = {
+  apiKey: "TU_API_KEY",
+  authDomain: "TU_PROYECTO.firebaseapp.com",
+  databaseURL: "https://TU_PROYECTO-default-rtdb.firebaseio.com",
+  projectId: "TU_PROYECTO",
+  storageBucket: "TU_PROYECTO.firebasestorage.app",
+  messagingSenderId: "TU_SENDER_ID",
+  appId: "TU_APP_ID"
+};
+```
+
+⚠️ IMPORTANTE: El projectId debe coincidir con el que aparece en tu archivo firebase-service-account.json.
+
+### 4️⃣ Variables de Entorno
 
 ```bash
-# Clonar el repositorio
+# 1. Clonar el repositorio
 git clone https://github.com/slrosasp/gpets-project.git
 cd gpets-project
 
-# Crear archivo de entorno desde el ejemplo
+# 2. Asegúrate de estar en la raíz del proyecto
+pwd
+# Debe mostrar: .../gpets-project
+
+# 3. Crea el archivo .env desde el ejemplo
 cp .env.example .env
 
-# Editar .env con tu URL de Firebase
-# Ejemplo:
-# FIREBASE_DATABASE_URL=https://tu-proyecto-default-rtdb.firebaseio.com
+# 4. Edita .env con la URL de tu Realtime Database de Firebase
+#    (usando notepad, code, o tu editor favorito)
+notepad .env
+
+# 5. Ejemplo (REEMPLAZA con tu URL de tu Realtime Database real):
+# FIREBASE_DB_URL=https://tu-proyecto-default-rtdb.firebaseio.com
+
+# 6. Guarda los cambios
 ```
 
 
-# 🐳 Dockerizar la Aplicación
+### 5️⃣ Dockerizar la Aplicación 🐳
 
 📌 Ejecutar con Docker Compose (RECOMENDADO)
 
@@ -77,10 +116,7 @@ cp .env.example .env
 docker-compose up --build
 ```
 
-# Listo, la API está en: http://localhost:8080
-
-
-
+### 6️⃣Listo, la API está en: http://localhost:8080
 ```
 ## 📡 Endpoints de la API REST
 
